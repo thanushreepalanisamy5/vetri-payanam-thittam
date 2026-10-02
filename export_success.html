@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ComicCraft - Export Successful</title>
+  <style>
+    body { margin: 0; padding: 80px 20px; text-align: center; font-family: Arial, Helvetica, sans-serif; background: #fafafa; color: #111; }
+    h1 { color: #28a745; font-size: 2rem; margin-bottom: 16px; }
+    p { margin: 0 0 26px; font-size: 1.05rem; }
+    .btn {
+      display: inline-block; padding: 12px 24px; color: #fff; background: #0066cc;
+      border-radius: 6px; text-decoration: none; font-size: 1rem; transition: background .2s;
+    }
+    .btn:hover { background: #004c99; }
+    .link { display: block; margin-top: 22px; font-size: 0.9rem; }
+    .link a { color: #0066cc; }
+  </style>
+</head>
+<body>
+  <h1>✅ Comic Exported Successfully!</h1>
+  <p>Your AI-powered comic has been successfully created! Dive back in and bring another story to life.</p>
+  <a class="btn" href="/">🎨 Go Create Another Comic</a>
+  {% if pdf_path %}
+  <span class="link">Didn't get the file? <a href="{{ pdf_path }}" download>Download the PDF again</a></span>
+  {% endif %}
+</body>
+</html>

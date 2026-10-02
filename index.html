@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ComicCraft - Create Your Comic</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: Arial, Helvetica, sans-serif; color: #222;
+      background: #8fb3c4 url('/static/images/background.svg') center / cover no-repeat fixed;
+    }
+    .card {
+      width: 100%; max-width: 430px; margin: 24px; padding: 28px 24px;
+      background: rgba(255, 255, 255, 0.92); border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    }
+    h1 { margin: 0 0 18px; text-align: center; font-size: 1.8rem; }
+    label { display: block; margin: 14px 0 5px; font-weight: bold; font-size: 0.92rem; }
+    textarea, input, select {
+      width: 100%; padding: 9px 10px; font-size: 0.95rem;
+      border: 1px solid #c7c7c7; border-radius: 4px; background: #fff;
+    }
+    textarea { min-height: 70px; resize: vertical; font-family: monospace; }
+    textarea:focus, input:focus, select:focus { outline: 2px solid #0066cc; border-color: #0066cc; }
+    button {
+      width: 100%; margin-top: 22px; padding: 12px; font-size: 1rem; color: #fff;
+      background: #0066cc; border: 0; border-radius: 4px; cursor: pointer; transition: background .2s;
+    }
+    button:hover { background: #004c99; }
+    button:disabled { background: #7a9cc2; cursor: wait; }
+    .error { margin-bottom: 10px; padding: 10px 12px; border-radius: 4px; background: #fdecea; color: #a12622; font-size: 0.9rem; }
+    #loading { display: none; margin-top: 16px; text-align: center; font-size: 0.9rem; color: #444; }
+    .spinner {
+      width: 30px; height: 30px; margin: 0 auto 8px; border: 4px solid #d6e4f5;
+      border-top-color: #0066cc; border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✏️ Create Your Comic</h1>
+
+    {% if error %}<div class="error"><strong>Something went wrong:</strong> {{ error }}</div>{% endif %}
+
+    <form id="comic-form" action="/generate" method="post">
+      <label for="prompt">Story Prompt:</label>
+      <textarea id="prompt" name="prompt" required minlength="3" maxlength="1000">{{ form.prompt or "A brave fox explores an enchanted forest." }}</textarea>
+
+      <label for="character_name">Main Character Name:</label>
+      <input id="character_name" name="character_name" type="text" required maxlength="60" value="{{ form.character_name or 'Finn' }}">
+
+      {% set settings = ["school", "forest", "space", "city"] %}
+      {% set tones = ["light-hearted", "dramatic", "poetic", "funny"] %}
+      {% set styles = ["anime", "pixel art", "comic book", "realistic"] %}
+
+      <label for="setting">Setting:</label>
+      <select id="setting" name="setting">
+        {% for s in settings %}<option value="{{ s }}" {% if (form.setting or 'forest') == s %}selected{% endif %}>{{ s|capitalize }}</option>{% endfor %}
+      </select>
+
+      <label for="tone">Story Tone:</label>
+      <select id="tone" name="tone">
+        {% for t in tones %}<option value="{{ t }}" {% if (form.tone or 'dramatic') == t %}selected{% endif %}>{{ t|capitalize }}</option>{% endfor %}
+      </select>
+
+      <label for="style">Art Style:</label>
+      <select id="style" name="style">
+        {% for a in styles %}<option value="{{ a }}" {% if (form.style or 'comic book') == a %}selected{% endif %}>{{ a|title }}</option>{% endfor %}
+      </select>
+
+      <button type="submit" id="submit-btn">Generate Comic</button>
+      <div id="loading">
+        <div class="spinner"></div>
+        Creating your comic - writing the story and drawing 5 panels.<br>
+        This can take a few minutes. Please keep this tab open.
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("comic-form").addEventListener("submit", function () {
+      var btn = document.getElementById("submit-btn");
+      btn.disabled = true; btn.textContent = "Generating...";
+      document.getElementById("loading").style.display = "block";
+    });
+    // Restore the button if the user navigates back (browser bfcache)
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) {
+        var btn = document.getElementById("submit-btn");
+        btn.disabled = false; btn.textContent = "Generate Comic";
+        document.getElementById("loading").style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
